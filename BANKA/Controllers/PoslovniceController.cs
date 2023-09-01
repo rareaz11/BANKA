@@ -46,32 +46,43 @@ namespace BANKA.Controllers
 
         public IActionResult Izmjena(Poslovnice poslovnice) 
         {//radi
+
             var db =new APIDbContext();
-
-            var poslovnice1 = db.Poslovnice.Find(poslovnice.PoslovnicaId);
-            var list= db.Poslovnice.ToList();
-            if (poslovnice1 == null)
+            var poslovnica1= db.Poslovnice.FirstOrDefault(x => x.Adresa ==poslovnice.Adresa);
+            if (poslovnica1 == null) 
             {
-                return BadRequest("ne postoji ta poslovnica");
+                return NotFound();  
             }
-            foreach (var item in list)
+            else 
             {
-                if (item.Adresa == poslovnice.Adresa)
-                {
-                    return BadRequest("podaravanje podataka ");
-                }
+                poslovnica1.kontakt = poslovnice.kontakt;
+                poslovnica1.mjesto = poslovnice.mjesto; 
 
-
-
-
+                db.Poslovnice.Update(poslovnica1);
+                db.SaveChanges();
+                return Ok("promjena: " + poslovnica1);
             }
-            poslovnice1.Adresa = poslovnice.Adresa; 
-            poslovnice1.ZaposlenikID = poslovnice.ZaposlenikID;
+            //var poslovnice1 = db.Poslovnice.Find(poslovnice.PoslovnicaId);
+            //var list= db.Poslovnice.ToList();
+            //if (poslovnice1 == null)
+            //{
+            //    return BadRequest("ne postoji ta poslovnica");
+            //}
+            //foreach (var item in list)
+            //{
+            //    if (item.Adresa == poslovnice.Adresa)
+            //    {
+            //        return BadRequest("podaravanje podataka ");
+            //    }
+
+
+
+
+            //}
+            //poslovnice1.Adresa = poslovnice.Adresa; 
+            //poslovnice1.ZaposlenikID = poslovnice.ZaposlenikID;
        
 
-            db.Poslovnice.Update(poslovnice1);
-            db.SaveChanges();
-            return Ok("promjena: " + poslovnice1);
         }
 
         [HttpDelete("{Id}")]
@@ -95,6 +106,23 @@ namespace BANKA.Controllers
                 return Ok("obrisan poslovnica: " +  poslovnica.PoslovnicaId);
             }
 
+        }
+        [HttpGet("{adresa}")]
+
+        public IActionResult PoAdresi(string adresa)
+        {
+            var db = new APIDbContext();    
+
+            var poslovnica= db.Poslovnice.FirstOrDefault(x=>x.Adresa==adresa);
+            if(poslovnica == null) 
+            {
+                return NotFound();
+            }
+
+            else 
+            {
+                return Ok(poslovnica);
+            }
         }
 
        

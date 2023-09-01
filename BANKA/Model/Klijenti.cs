@@ -22,15 +22,15 @@ namespace BANKA.Model
         [Required]
         public string adresa { get; set; }
       
-        [Required]
+        
         public string lozinka { get; set; }
         [Required]
       
         public string korisnickoIme { get; set; }
-        [Required]
+        
       
         public string brojRacuna { get; set; }
-        [Required]
+   
 
         public double stanjeRacuna { get; set; } = 0;
         [Required]

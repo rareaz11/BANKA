@@ -21,6 +21,23 @@ namespace BANKA.Controllers
            
 
         }
+        [HttpGet("{grad}")]
+
+        public IActionResult PoGradu(string grad) 
+        {
+            var db=new APIDbContext();
+
+            var bankomat = db.Bankomatis.FirstOrDefault(x => x.grad ==grad);
+            if (bankomat == null) 
+            {
+                return BadRequest("Bankomat nemamo u tom gradu");
+            }
+            else 
+            {
+                return Ok(bankomat);
+            }
+
+        }
 
         [HttpPost]
 
@@ -50,42 +67,63 @@ namespace BANKA.Controllers
 
         public IActionResult Izmjena(Bankomati bankomati) 
         {var db= new APIDbContext();
-            Bankomati bankomati1 = db.Bankomatis.Find(bankomati.Id);
+            Bankomati bankomati1 = db.Bankomatis.FirstOrDefault(x=>x.grad==bankomati.grad);
             var list =db.Bankomatis.ToList();
 
-            if (bankomati == null) 
+            foreach(var item in list) 
             {
-                return BadRequest();    
-
-            }
-
-            else 
-            {
-                foreach (var item in list)
+                if(item.adresa == bankomati.adresa) 
                 {
-                    if(item.adresa == bankomati.adresa) 
-                    {
-                        return BadRequest();
-                    }
-
+                    return BadRequest();
                 }
             }
 
             bankomati1.adresa = bankomati.adresa;
             
+            //if (bankomati == null) 
+            //{
+            //    return BadRequest();    
+
+            //}
+
+            //else 
+            //{
+            //    foreach (var item in list)
+            //    {
+            //        if(item.adresa == bankomati.adresa) 
+            //        {
+            //            return BadRequest();
+            //        }
+
+            //    }
+            //}
+
+            //bankomati1.adresa = bankomati.adresa;
+            
             db.Bankomatis.Update(bankomati1);
             db.SaveChanges();
             return Ok(bankomati1);
 
+        }
+        [HttpDelete("{adresa}")]
+        
+        public IActionResult Izbrisi(string adresa) 
+        {
+            var db=new APIDbContext();  
 
+            var bankomati = db.Bankomatis.FirstOrDefault(x=>x.adresa==adresa);
+            if(bankomati == null) 
+            {
+                return NotFound("ne postoji bankomat sa tom adresom");  
+            }
 
-
-
-
-
-
-
-
+            else 
+            {
+                db.Remove(bankomati);
+                db.SaveChanges();
+                return Ok("Izbrisan");
+            
+            }
         }
 
     }

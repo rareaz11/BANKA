@@ -162,15 +162,15 @@ namespace BANKA.Controllers
 
 
         }
-        [HttpDelete("{kime}")]
+        [HttpDelete("{a}")]
 
-        public IActionResult Izbrisi(string kime)
+        public IActionResult Izbrisi(int a)
         {
             if (ModelState.IsValid)
             {
                 var db = new APIDbContext();
 
-                Zaposlenici zaposlenici1 = db.Zaposlenici.FirstOrDefault(x=>x.KorisnickoIme==kime);
+                Zaposlenici zaposlenici1 = db.Zaposlenici.Find(a);
 
 
                 if (zaposlenici1 == null)
